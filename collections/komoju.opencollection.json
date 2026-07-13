@@ -1,0 +1,310 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "KOMOJU API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{secretKey}}",
+      "password": ""
+    }
+  },
+  "items": [
+    {
+      "info": { "name": "Payments", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List payments.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/payments?page=1&per_page=25",
+            "params": [
+              { "name": "page", "value": "1", "type": "query", "description": "Page number." },
+              { "name": "per_page", "value": "25", "type": "query", "description": "Results per page." }
+            ]
+          },
+          "docs": "Retrieves a paginated list of payments. Filter by currency, external_order_num, status, and time range."
+        },
+        {
+          "info": { "name": "Create a payment.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/payments",
+            "body": { "type": "json", "data": "{\n  \"amount\": 1000,\n  \"currency\": \"JPY\",\n  \"payment_details\": {\n    \"type\": \"konbini\",\n    \"store\": \"lawson\",\n    \"email\": \"customer@example.com\"\n  }\n}" }
+          },
+          "docs": "Creates a payment for a given amount and currency. Provide payment_details or a customer ID (not both)."
+        },
+        {
+          "info": { "name": "Show a payment.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/payments/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The payment ID." } ]
+          },
+          "docs": "Retrieves a single payment by its id."
+        },
+        {
+          "info": { "name": "Update a payment.", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://komoju.com/api/v1/payments/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The payment ID." } ],
+            "body": { "type": "json", "data": "{\n  \"description\": \"Updated description\"\n}" }
+          },
+          "docs": "Updates a payment. Only description and metadata can be changed."
+        },
+        {
+          "info": { "name": "Capture a payment.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/payments/:id/capture",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The payment ID." } ]
+          },
+          "docs": "Captures an authorized payment (created with capture=false or session capture=manual)."
+        },
+        {
+          "info": { "name": "Refund a payment.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/payments/:id/refund",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The payment ID." } ],
+            "body": { "type": "json", "data": "{\n  \"amount\": 1000\n}" }
+          },
+          "docs": "Refunds an amount from a payment. Omit amount to refund in full."
+        },
+        {
+          "info": { "name": "Cancel a payment.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/payments/:id/cancel",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The payment ID." } ]
+          },
+          "docs": "Cancels a pending or authorized payment."
+        },
+        {
+          "info": { "name": "Create a refund request.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/payments/:id/refund_request",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The payment ID." } ],
+            "body": { "type": "json", "data": "{\n  \"bank_account\": {}\n}" }
+          },
+          "docs": "Requests a manual refund for non-refundable methods like konbini, to a specified bank account."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Sessions", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Create a session.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/sessions",
+            "body": { "type": "json", "data": "{\n  \"amount\": 1000,\n  \"currency\": \"JPY\",\n  \"mode\": \"payment\",\n  \"return_url\": \"https://example.com/return\"\n}" }
+          },
+          "docs": "Creates a hosted checkout session (payment, customer, or customer_payment mode)."
+        },
+        {
+          "info": { "name": "Show a session.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/sessions/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The session ID." } ]
+          },
+          "docs": "Retrieves a session by its id."
+        },
+        {
+          "info": { "name": "Cancel a session.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/sessions/:id/cancel",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The session ID." } ]
+          },
+          "docs": "Cancels a session."
+        },
+        {
+          "info": { "name": "Pay for a session.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/sessions/:id/pay",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The session ID." } ],
+            "body": { "type": "json", "data": "{\n  \"payment_details\": {\n    \"type\": \"paypay\"\n  }\n}" }
+          },
+          "docs": "Provides payment details to pay for a session directly (publishable key allowed)."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Tokens", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Create a token.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/tokens",
+            "body": { "type": "json", "data": "{\n  \"payment_details\": {\n    \"type\": \"credit_card\",\n    \"number\": \"4111111111111111\",\n    \"month\": 12,\n    \"year\": 2030,\n    \"verification_value\": \"123\"\n  }\n}" }
+          },
+          "docs": "Creates a token from payment details. Best made client-side (publishable key allowed)."
+        },
+        {
+          "info": { "name": "Create a secure token (3DS).", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/secure_tokens",
+            "body": { "type": "json", "data": "{\n  \"payment_details\": {\n    \"type\": \"credit_card\",\n    \"number\": \"4111111111111111\",\n    \"month\": 12,\n    \"year\": 2030,\n    \"verification_value\": \"123\"\n  },\n  \"return_url\": \"https://example.com/return\"\n}" }
+          },
+          "docs": "Creates a SecureToken with 3D Secure. Response includes an authentication_url."
+        },
+        {
+          "info": { "name": "Show a secure token.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/secure_tokens/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The secure token ID." } ]
+          },
+          "docs": "Retrieves a SecureToken by its id."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Customers", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List customers.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/customers?page=1&per_page=25",
+            "params": [
+              { "name": "page", "value": "1", "type": "query", "description": "Page number." },
+              { "name": "per_page", "value": "25", "type": "query", "description": "Results per page." }
+            ]
+          },
+          "docs": "Retrieves a paginated list of customers."
+        },
+        {
+          "info": { "name": "Create a customer.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/customers",
+            "body": { "type": "json", "data": "{\n  \"email\": \"customer@example.com\",\n  \"payment_details\": \"tok_xxxxx\"\n}" }
+          },
+          "docs": "Creates a customer with securely stored payment details."
+        },
+        {
+          "info": { "name": "Show a customer.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/customers/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The customer ID." } ]
+          },
+          "docs": "Retrieves customer personal information."
+        },
+        {
+          "info": { "name": "Update a customer.", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://komoju.com/api/v1/customers/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The customer ID." } ],
+            "body": { "type": "json", "data": "{\n  \"payment_details\": \"tok_yyyyy\"\n}" }
+          },
+          "docs": "Updates a customer. A new set of payment_details may be specified."
+        },
+        {
+          "info": { "name": "Delete a customer.", "type": "http" },
+          "http": {
+            "method": "DELETE",
+            "url": "https://komoju.com/api/v1/customers/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The customer ID." } ]
+          },
+          "docs": "Deletes a customer, erasing stored payment details."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Subscriptions", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List subscriptions.", "type": "http" },
+          "http": { "method": "GET", "url": "https://komoju.com/api/v1/subscriptions" },
+          "docs": "Lists existing subscriptions."
+        },
+        {
+          "info": { "name": "Create a subscription.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/subscriptions",
+            "body": { "type": "json", "data": "{\n  \"customer\": \"customer_id\",\n  \"amount\": 1000,\n  \"currency\": \"JPY\",\n  \"period\": \"monthly\"\n}" }
+          },
+          "docs": "Creates a recurring payment against a saved customer (weekly, monthly, or yearly)."
+        },
+        {
+          "info": { "name": "Show a subscription.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/subscriptions/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The subscription ID." } ]
+          },
+          "docs": "Shows an existing subscription."
+        },
+        {
+          "info": { "name": "Delete a subscription.", "type": "http" },
+          "http": {
+            "method": "DELETE",
+            "url": "https://komoju.com/api/v1/subscriptions/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The subscription ID." } ]
+          },
+          "docs": "Deletes a subscription; its recurring payments stop."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Payment Methods", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List payment methods.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/payment_methods?amount=1000&currency=JPY",
+            "params": [
+              { "name": "amount", "value": "1000", "type": "query", "description": "Payment amount." },
+              { "name": "currency", "value": "JPY", "type": "query", "description": "Payment currency." }
+            ]
+          },
+          "docs": "Lists payment methods available to the merchant (credit_card, konbini, bank_transfer, pay_easy, paypay, etc.)."
+        },
+        {
+          "info": { "name": "Show a konbini barcode.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/barcodes/:payment_id",
+            "params": [ { "name": "payment_id", "value": "", "type": "path", "description": "The konbini payment ID." } ]
+          },
+          "docs": "Fetches the latest barcode for a compatible konbini payment."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Events", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List events.", "type": "http" },
+          "http": { "method": "GET", "url": "https://komoju.com/api/v1/events" },
+          "docs": "Lists past webhook events from most-recent to least-recent."
+        },
+        {
+          "info": { "name": "Show an event.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/events/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The event ID." } ]
+          },
+          "docs": "Retrieves an event by its id."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

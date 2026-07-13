@@ -1,0 +1,165 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: KOMOJU
+providerId: komoju
+created: '2026-07-12'
+modified: '2026-07-12'
+reconciled: false
+tags:
+- Payments
+- Payment Gateway
+- Japan
+- Konbini
+- Fintech
+- Plans
+description: >-
+  KOMOJU has no subscription tiers, monthly fees, or setup fees for API access -
+  its own marketing states "No sign up fees. No monthly fees. Ever!" Instead,
+  KOMOJU charges a per-transaction fee that varies by payment method and region.
+  Merchants open an account (test and live key pairs are issued) and are billed
+  as a percentage of each successful transaction. High-volume merchants
+  (published threshold around USD 150,000/month) can negotiate custom volume
+  pricing. The rates below are Japan-region published rates and are indicative;
+  exact contracted rates depend on the merchant agreement and are not reconciled
+  here.
+notes: >-
+  Per-transaction rates are the effective "plan" for a payment gateway like
+  KOMOJU. Rates are method- and region-specific and change over time; verify
+  current pricing on en.komoju.com/pricing during reconciliation. The API itself
+  carries no separate access fee.
+sources:
+- https://en.komoju.com/pricing/
+- https://en.komoju.com/
+- https://doc.komoju.com/docs/authentication
+plans:
+- id: komoju-test
+  name: Test Environment
+  type: free
+  description: >-
+    Every KOMOJU merchant account includes a test key pair (secret and
+    publishable) to exercise the full API against test payment methods with no
+    charge before going live.
+  entries:
+  - label: Test API Access
+    name: test_access
+    type: flat
+    metric: access
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: free
+    userMultiplied: false
+  elements:
+  - name: Full API Access (Test Mode)
+  - name: Test Payment Methods
+  - name: Webhooks
+- id: komoju-transaction
+  name: Pay-As-You-Go (Per Transaction)
+  type: usage
+  description: >-
+    Live processing billed as a percentage of each successful transaction, with
+    no monthly or setup fee. The rate depends on the payment method. Rates below
+    are indicative Japan-region published rates.
+  entries:
+  - label: Credit Card (Visa/Mastercard/JCB/Amex/Diners/Discover)
+    name: fee_credit_card
+    type: usage
+    metric: transaction
+    limit: -1
+    timeFrame: month
+    geo: japan
+    unit: 1
+    price: '3.25% per transaction (indicative)'
+    userMultiplied: false
+  - label: Convenience Store (Konbini)
+    name: fee_konbini
+    type: usage
+    metric: transaction
+    limit: -1
+    timeFrame: month
+    geo: japan
+    unit: 1
+    price: '2.75% per transaction (indicative)'
+    userMultiplied: false
+  - label: Bank Transfer
+    name: fee_bank_transfer
+    type: usage
+    metric: transaction
+    limit: -1
+    timeFrame: month
+    geo: japan
+    unit: 1
+    price: '1.4% per transaction (indicative)'
+    userMultiplied: false
+  - label: Pay-easy (ATM Transfer)
+    name: fee_pay_easy
+    type: usage
+    metric: transaction
+    limit: -1
+    timeFrame: month
+    geo: japan
+    unit: 1
+    price: '2.75% per transaction (indicative)'
+    userMultiplied: false
+  - label: PayPay / Merpay / d-Barai / au PAY
+    name: fee_emoney_wallets
+    type: usage
+    metric: transaction
+    limit: -1
+    timeFrame: month
+    geo: japan
+    unit: 1
+    price: 'from 3.5% per transaction (indicative)'
+    userMultiplied: false
+  - label: Rakuten Pay
+    name: fee_rakuten_pay
+    type: usage
+    metric: transaction
+    limit: -1
+    timeFrame: month
+    geo: japan
+    unit: 1
+    price: 'from 4.4% per transaction (indicative)'
+    userMultiplied: false
+  - label: Paidy (Buy Now Pay Later)
+    name: fee_paidy
+    type: usage
+    metric: transaction
+    limit: -1
+    timeFrame: month
+    geo: japan
+    unit: 1
+    price: 'from 3.5% per transaction (indicative)'
+    userMultiplied: false
+  elements:
+  - name: No Monthly Fee
+  - name: No Setup Fee
+  - name: Full API Access (Live Mode)
+  - name: All Payment Methods
+  - name: Webhooks
+- id: komoju-enterprise
+  name: Volume / Enterprise
+  type: enterprise
+  description: >-
+    Negotiated volume pricing for high-volume merchants (published threshold
+    around USD 150,000 per month). Contact KOMOJU / Degica for terms.
+  entries:
+  - label: Volume Agreement
+    name: enterprise
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Negotiated Per-Transaction Rates
+  - name: Volume Discounts
+  - name: Platform / Marketplace Model
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

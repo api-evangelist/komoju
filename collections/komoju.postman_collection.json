@@ -1,0 +1,318 @@
+{
+  "info": {
+    "name": "KOMOJU API",
+    "description": "KOMOJU is a Japan-focused global payment gateway operated by Degica. REST API for payments (cards, konbini, bank transfer, Pay-easy, PayPay and other e-money wallets), hosted checkout sessions, tokenization, customers, subscriptions, payment methods, and webhook events. Base URL: https://komoju.com/api/v1. Authentication is HTTP Basic - use your secret API key as the username and leave the password empty.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      { "key": "username", "value": "{{secretKey}}", "type": "string" },
+      { "key": "password", "value": "", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://komoju.com/api/v1", "type": "string" },
+    { "key": "secretKey", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "List payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/payments?page=1&per_page=25", "host": ["{{baseUrl}}"], "path": ["payments"], "query": [{ "key": "page", "value": "1" }, { "key": "per_page", "value": "25" }] },
+            "description": "Retrieves a paginated list of payments. Filter by currency, external_order_num, status, and time range."
+          }
+        },
+        {
+          "name": "Create a payment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"amount\": 1000,\n  \"currency\": \"JPY\",\n  \"payment_details\": {\n    \"type\": \"konbini\",\n    \"store\": \"lawson\",\n    \"email\": \"customer@example.com\"\n  }\n}" },
+            "url": { "raw": "{{baseUrl}}/payments", "host": ["{{baseUrl}}"], "path": ["payments"] },
+            "description": "Creates a payment for a given amount and currency. Provide payment_details or a customer ID (not both)."
+          }
+        },
+        {
+          "name": "Show a payment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/payments/:id", "host": ["{{baseUrl}}"], "path": ["payments", ":id"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Retrieves a single payment by its id."
+          }
+        },
+        {
+          "name": "Update a payment",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated description\"\n}" },
+            "url": { "raw": "{{baseUrl}}/payments/:id", "host": ["{{baseUrl}}"], "path": ["payments", ":id"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Updates a payment. Only description and metadata can be changed."
+          }
+        },
+        {
+          "name": "Capture a payment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/payments/:id/capture", "host": ["{{baseUrl}}"], "path": ["payments", ":id", "capture"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Captures an authorized payment (created with capture=false or session capture=manual)."
+          }
+        },
+        {
+          "name": "Refund a payment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"amount\": 1000\n}" },
+            "url": { "raw": "{{baseUrl}}/payments/:id/refund", "host": ["{{baseUrl}}"], "path": ["payments", ":id", "refund"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Refunds an amount from a payment. Omit amount to refund in full."
+          }
+        },
+        {
+          "name": "Cancel a payment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/payments/:id/cancel", "host": ["{{baseUrl}}"], "path": ["payments", ":id", "cancel"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Cancels a pending or authorized payment."
+          }
+        },
+        {
+          "name": "Create a refund request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"bank_account\": {}\n}" },
+            "url": { "raw": "{{baseUrl}}/payments/:id/refund_request", "host": ["{{baseUrl}}"], "path": ["payments", ":id", "refund_request"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Requests a manual refund for non-refundable methods like konbini, to a specified bank account."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "Create a session",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"amount\": 1000,\n  \"currency\": \"JPY\",\n  \"mode\": \"payment\",\n  \"return_url\": \"https://example.com/return\"\n}" },
+            "url": { "raw": "{{baseUrl}}/sessions", "host": ["{{baseUrl}}"], "path": ["sessions"] },
+            "description": "Creates a hosted checkout session (payment, customer, or customer_payment mode)."
+          }
+        },
+        {
+          "name": "Show a session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/sessions/:id", "host": ["{{baseUrl}}"], "path": ["sessions", ":id"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Retrieves a session by its id."
+          }
+        },
+        {
+          "name": "Cancel a session",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/sessions/:id/cancel", "host": ["{{baseUrl}}"], "path": ["sessions", ":id", "cancel"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Cancels a session."
+          }
+        },
+        {
+          "name": "Pay for a session",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"payment_details\": {\n    \"type\": \"paypay\"\n  }\n}" },
+            "url": { "raw": "{{baseUrl}}/sessions/:id/pay", "host": ["{{baseUrl}}"], "path": ["sessions", ":id", "pay"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Provides payment details to pay for a session directly (publishable key allowed)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tokens",
+      "item": [
+        {
+          "name": "Create a token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"payment_details\": {\n    \"type\": \"credit_card\",\n    \"number\": \"4111111111111111\",\n    \"month\": 12,\n    \"year\": 2030,\n    \"verification_value\": \"123\"\n  }\n}" },
+            "url": { "raw": "{{baseUrl}}/tokens", "host": ["{{baseUrl}}"], "path": ["tokens"] },
+            "description": "Creates a token from payment details. Best made client-side (publishable key allowed)."
+          }
+        },
+        {
+          "name": "Create a secure token (3DS)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"payment_details\": {\n    \"type\": \"credit_card\",\n    \"number\": \"4111111111111111\",\n    \"month\": 12,\n    \"year\": 2030,\n    \"verification_value\": \"123\"\n  },\n  \"return_url\": \"https://example.com/return\"\n}" },
+            "url": { "raw": "{{baseUrl}}/secure_tokens", "host": ["{{baseUrl}}"], "path": ["secure_tokens"] },
+            "description": "Creates a SecureToken with 3D Secure. Response includes an authentication_url."
+          }
+        },
+        {
+          "name": "Show a secure token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/secure_tokens/:id", "host": ["{{baseUrl}}"], "path": ["secure_tokens", ":id"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Retrieves a SecureToken by its id."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customers",
+      "item": [
+        {
+          "name": "List customers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/customers?page=1&per_page=25", "host": ["{{baseUrl}}"], "path": ["customers"], "query": [{ "key": "page", "value": "1" }, { "key": "per_page", "value": "25" }] },
+            "description": "Retrieves a paginated list of customers."
+          }
+        },
+        {
+          "name": "Create a customer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"customer@example.com\",\n  \"payment_details\": \"tok_xxxxx\"\n}" },
+            "url": { "raw": "{{baseUrl}}/customers", "host": ["{{baseUrl}}"], "path": ["customers"] },
+            "description": "Creates a customer with securely stored payment details."
+          }
+        },
+        {
+          "name": "Show a customer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/customers/:id", "host": ["{{baseUrl}}"], "path": ["customers", ":id"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Retrieves customer personal information."
+          }
+        },
+        {
+          "name": "Update a customer",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"payment_details\": \"tok_yyyyy\"\n}" },
+            "url": { "raw": "{{baseUrl}}/customers/:id", "host": ["{{baseUrl}}"], "path": ["customers", ":id"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Updates a customer. A new set of payment_details may be specified."
+          }
+        },
+        {
+          "name": "Delete a customer",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/customers/:id", "host": ["{{baseUrl}}"], "path": ["customers", ":id"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Deletes a customer, erasing stored payment details."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subscriptions",
+      "item": [
+        {
+          "name": "List subscriptions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/subscriptions", "host": ["{{baseUrl}}"], "path": ["subscriptions"] },
+            "description": "Lists existing subscriptions."
+          }
+        },
+        {
+          "name": "Create a subscription",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"customer\": \"customer_id\",\n  \"amount\": 1000,\n  \"currency\": \"JPY\",\n  \"period\": \"monthly\"\n}" },
+            "url": { "raw": "{{baseUrl}}/subscriptions", "host": ["{{baseUrl}}"], "path": ["subscriptions"] },
+            "description": "Creates a recurring payment against a saved customer (weekly, monthly, or yearly)."
+          }
+        },
+        {
+          "name": "Show a subscription",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/subscriptions/:id", "host": ["{{baseUrl}}"], "path": ["subscriptions", ":id"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Shows an existing subscription."
+          }
+        },
+        {
+          "name": "Delete a subscription",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/subscriptions/:id", "host": ["{{baseUrl}}"], "path": ["subscriptions", ":id"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Deletes a subscription; its recurring payments stop."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payment Methods",
+      "item": [
+        {
+          "name": "List payment methods",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/payment_methods?amount=1000&currency=JPY", "host": ["{{baseUrl}}"], "path": ["payment_methods"], "query": [{ "key": "amount", "value": "1000" }, { "key": "currency", "value": "JPY" }] },
+            "description": "Lists payment methods available to the merchant (credit_card, konbini, bank_transfer, pay_easy, paypay, etc.)."
+          }
+        },
+        {
+          "name": "Show a konbini barcode",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/barcodes/:payment_id", "host": ["{{baseUrl}}"], "path": ["barcodes", ":payment_id"], "variable": [{ "key": "payment_id", "value": "" }] },
+            "description": "Fetches the latest barcode for a compatible konbini payment."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "List events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/events", "host": ["{{baseUrl}}"], "path": ["events"] },
+            "description": "Lists past webhook events from most-recent to least-recent."
+          }
+        },
+        {
+          "name": "Show an event",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/events/:id", "host": ["{{baseUrl}}"], "path": ["events", ":id"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Retrieves an event by its id."
+          }
+        }
+      ]
+    }
+  ]
+}

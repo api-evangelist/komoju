@@ -1,0 +1,139 @@
+aid: komoju
+name: KOMOJU
+review:
+  question: Does KOMOJU expose a documented public WebSocket API?
+  answer: false
+  date: '2026-07-12'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was authored. KOMOJU's public API surface
+    (https://komoju.com/api/v1) is request/response REST over HTTPS. Its
+    asynchronous, event-driven behavior is delivered via outbound webhooks -
+    KOMOJU POSTs signed event payloads (X-Komoju-Signature HMAC) to a
+    merchant-configured HTTPS endpoint - not via a server-push transport
+    (WebSocket or SSE) on KOMOJU's own API. Because there is no WebSocket or
+    SSE surface to model, and current API Evangelist scope treats plain HTTP
+    webhook callbacks as REST-adjacent rather than an AsyncAPI channel on the
+    provider's own host, no AsyncAPI spec was created.
+findings:
+  summary: |
+    KOMOJU does not publish a documented public WebSocket API. KOMOJU is a
+    Japan-focused payment gateway operated by Degica. Its API is a
+    request/response REST API over HTTPS with base URL
+    https://komoju.com/api/v1, authenticated with HTTP Basic (API key as
+    username, empty password). Asynchronous payment-state changes (for konbini,
+    bank transfer, PayPay, and other delayed methods) are communicated to
+    merchants through outbound webhooks - signed HTTP POSTs to a
+    merchant-configured URL - and can also be polled via the Sessions Show and
+    Events endpoints. No realtime, bidirectional, or streaming WebSocket
+    (ws:// or wss://) endpoint is documented anywhere in KOMOJU's API
+    reference as of the review date.
+  accessModel: |
+    Commercial gateway requiring a merchant account. Each account has separate
+    test and live key pairs, each with a secret key (full access, server-side)
+    and a publishable key (limited to Create Token and Pay Session, safe
+    client-side). Authentication is HTTP Basic with the key as username and an
+    empty password.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://komoju.com/api/v1
+      documented: true
+      note: All payment, session, token, customer, subscription, payment-method, and event endpoints are HTTPS REST.
+    - protocol: Webhook
+      scheme: https
+      documented: true
+      note: KOMOJU POSTs signed event payloads (X-Komoju-Signature HMAC) to a merchant-configured HTTPS endpoint. Server-to-endpoint HTTP, not WebSocket.
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented anywhere in KOMOJU's API reference as of the review date.
+  endpointsConfirmedRest:
+    - GET    https://komoju.com/api/v1/payments
+    - POST   https://komoju.com/api/v1/payments
+    - GET    https://komoju.com/api/v1/payments/{id}
+    - PATCH  https://komoju.com/api/v1/payments/{id}
+    - POST   https://komoju.com/api/v1/payments/{id}/capture
+    - POST   https://komoju.com/api/v1/payments/{id}/refund
+    - POST   https://komoju.com/api/v1/payments/{id}/cancel
+    - POST   https://komoju.com/api/v1/payments/{id}/refund_request
+    - POST   https://komoju.com/api/v1/sessions
+    - GET    https://komoju.com/api/v1/sessions/{id}
+    - POST   https://komoju.com/api/v1/sessions/{id}/cancel
+    - POST   https://komoju.com/api/v1/sessions/{id}/pay
+    - POST   https://komoju.com/api/v1/tokens
+    - POST   https://komoju.com/api/v1/secure_tokens
+    - GET    https://komoju.com/api/v1/secure_tokens/{id}
+    - POST   https://komoju.com/api/v1/customers
+    - GET    https://komoju.com/api/v1/customers
+    - GET    https://komoju.com/api/v1/customers/{id}
+    - PATCH  https://komoju.com/api/v1/customers/{id}
+    - DELETE https://komoju.com/api/v1/customers/{id}
+    - POST   https://komoju.com/api/v1/subscriptions
+    - GET    https://komoju.com/api/v1/subscriptions
+    - GET    https://komoju.com/api/v1/subscriptions/{id}
+    - DELETE https://komoju.com/api/v1/subscriptions/{id}
+    - GET    https://komoju.com/api/v1/payment_methods
+    - GET    https://komoju.com/api/v1/events
+    - GET    https://komoju.com/api/v1/events/{id}
+    - GET    https://komoju.com/api/v1/barcodes/{payment_id}
+  endpointsModeled:
+    note: |
+      All endpoints listed under endpointsConfirmedRest were confirmed against
+      the public KOMOJU API reference (doc.komoju.com), including exact paths
+      and HTTP methods. The request/response SCHEMAS in
+      openapi/komoju-openapi.yml are a representative, partly modeled subset -
+      object field lists are simplified and some objects use
+      additionalProperties where the full attribute set is extensive. The
+      captured endpoint subset omits the KOMOJU Platform Model / sub-merchant,
+      settlement, balance, file, live-application, chargeback, and cloud
+      terminal endpoints, which are documented but out of scope for this
+      representative catalog entry.
+  supportedPaymentMethods:
+    - credit_card
+    - konbini
+    - bank_transfer
+    - pay_easy
+    - paypay
+    - merpay
+    - au_pay
+    - rakutenpay
+    - linepay
+    - alipay
+    - wechatpay
+    - paidy
+sources:
+  - url: https://doc.komoju.com/
+    type: Documentation
+    note: KOMOJU documentation home; llms.txt indexes all guides and the OpenAPI-backed API reference.
+  - url: https://doc.komoju.com/docs/authentication
+    type: Documentation
+    note: HTTP Basic auth, API key as username with empty password; secret vs publishable keys; test/live pairs.
+  - url: https://doc.komoju.com/reference/payments
+    type: APIReference
+    note: Payment create/list/show/update/capture/refund/cancel/refund_request under /payments. All REST. No WebSocket.
+  - url: https://doc.komoju.com/reference/sessions
+    type: APIReference
+    note: Hosted checkout sessions create/show/cancel/pay under /sessions.
+  - url: https://doc.komoju.com/reference/tokens
+    type: APIReference
+    note: Token and secure token (3DS) creation under /tokens and /secure_tokens.
+  - url: https://doc.komoju.com/reference/createcustomer
+    type: APIReference
+    note: Customer CRUD under /customers.
+  - url: https://doc.komoju.com/reference/listevents
+    type: APIReference
+    note: Webhook events list/show under /events.
+  - url: https://doc.komoju.com/docs/webhooks
+    type: Documentation
+    note: Outbound webhooks with X-Komoju-Signature SHA-2 HMAC verification. Server-to-endpoint HTTP POST, not WebSocket.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket protocol surface exists on KOMOJU's own API. The public API is
+    request/response REST (https://komoju.com/api/v1) plus outbound signed HTTP
+    webhooks. No AsyncAPI document was created because there is no server-push
+    transport (WebSocket or SSE) on KOMOJU's own host to model - asynchronous
+    delivery happens via webhook callbacks to merchant-hosted endpoints.

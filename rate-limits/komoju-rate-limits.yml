@@ -1,0 +1,61 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: KOMOJU
+providerId: komoju
+created: '2026-07-12'
+modified: '2026-07-12'
+reconciled: false
+tags:
+- Payments
+- Payment Gateway
+- Japan
+- Rate Limiting
+- Quotas
+description: >-
+  KOMOJU does not publish fixed numeric rate limits for its REST API
+  (https://komoju.com/api/v1) in its public documentation. As a production
+  payment gateway it applies standard abuse and fraud protections, and clients
+  should be prepared to handle HTTP 429 (Too Many Requests) with backoff.
+  KOMOJU does document request-safety mechanisms that interact with retries:
+  POST requests support idempotency via the X-KOMOJU-IDEMPOTENCY header (keys
+  valid up to 24 hours), and a request retried before its initial response has
+  been produced returns HTTP 409.
+notes: >-
+  No specific per-account or per-endpoint numeric request-rate limit is
+  documented as of the review date. Values here describe documented behaviors
+  (idempotency, 409 on in-flight retry) rather than published thresholds.
+  Confirm any concrete limits with KOMOJU support during reconciliation.
+sources:
+- https://doc.komoju.com/docs/idempotent-requests
+- https://doc.komoju.com/docs/errors
+- https://doc.komoju.com/docs/authentication
+responseCodes:
+  throttled: 429
+  conflict: 409
+limits:
+- name: REST API Requests
+  scope: account
+  metric: requests
+  limit: not published
+  notes: No fixed numeric request-rate limit is documented for the KOMOJU REST API.
+- name: Idempotency Key Validity
+  scope: request
+  metric: hours
+  limit: 24
+  notes: X-KOMOJU-IDEMPOTENCY keys are valid up to 24 hours after first use, then become reusable.
+- name: Idempotency Key Length
+  scope: request
+  metric: characters
+  limit: 100
+  notes: Idempotency keys are limited to 100 ASCII characters.
+policies:
+- name: Idempotent Requests
+  description: POST requests accept an X-KOMOJU-IDEMPOTENCY header so retries execute the operation at most once; the original response is replayed for repeated keys.
+- name: In-Flight Retry Conflict
+  description: Retrying a request with the same idempotency key before the initial request has produced a response returns HTTP 409.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter and honor Retry-After on any 429 responses.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
