@@ -164,6 +164,8 @@ apis:
     payment.refunded, payment.failed, payment.marked.as.fraud, and more). Webhooks are
     delivered as signed HTTP POSTs verified via an X-Komoju-Signature HMAC header.
 common:
+- type: AgenticAccess
+  url: agentic-access/komoju-agentic-access.yml
 - type: DomainSecurity
   url: security/komoju-domain-security.yml
 - type: Authentication
