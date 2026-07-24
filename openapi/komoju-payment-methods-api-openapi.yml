@@ -1,0 +1,97 @@
+openapi: 3.0.3
+info:
+  title: KOMOJU Barcodes Payment Methods API
+  description: 'KOMOJU is a Japan-focused global payment gateway operated by Degica. The REST API accepts payments across Japanese and international payment methods - credit cards, convenience store (konbini), bank transfer, Pay-easy (ATM), and e-money / mobile wallets such as PayPay, Merpay, au PAY, Rakuten Pay, LINE Pay, Alipay, and WeChat Pay - plus a hosted checkout (Sessions), tokenization, saved customers, subscriptions, and webhook events.
+
+
+    Base URL: https://komoju.com/api/v1. Authentication is HTTP Basic: send your secret (or publishable, where allowed) API key as the username and leave the password empty (for example `curl -u secret_key: ...`). Separate live and test key pairs are issued per merchant account. POST requests support idempotency via the `X-KOMOJU-IDEMPOTENCY` header, and an optional `X-KOMOJU-API-VERSION` header pins the API version.
+
+
+    This description is grounded in the public KOMOJU API reference (doc.komoju.com). Paths, methods, and authentication are confirmed against that reference. Request/response schemas below are a representative, partly modeled subset - some object properties are simplified or marked additionalProperties where the full field list is extensive; consult the official reference for exhaustive field-level detail.'
+  version: '1.0'
+  contact:
+    name: KOMOJU (Degica)
+    url: https://en.komoju.com
+  license:
+    name: Proprietary
+    url: https://en.komoju.com/terms/
+servers:
+- url: https://komoju.com/api/v1
+  description: KOMOJU API (live and test share this host; the key pair selects the environment)
+security:
+- basicAuth: []
+tags:
+- name: Payment Methods
+  description: List the payment methods available to the authenticated merchant.
+paths:
+  /payment_methods:
+    get:
+      operationId: listPaymentMethods
+      tags:
+      - Payment Methods
+      summary: List payment methods
+      description: Lists the payment methods available to the authenticated merchant (for example credit_card, konbini, bank_transfer, pay_easy, paypay, merpay, au_pay, rakutenpay, linepay, alipay, wechatpay, paidy).
+      parameters:
+      - name: amount
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: currency
+        in: query
+        required: false
+        schema:
+          type: string
+          example: JPY
+      responses:
+        '200':
+          description: A list of available payment methods.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentMethod'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Invalid authorization (missing or invalid API key).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            param:
+              type: string
+    PaymentMethod:
+      type: object
+      properties:
+        type:
+          type: string
+          example: konbini
+        brands:
+          type: array
+          items:
+            type: string
+        currencies:
+          type: array
+          items:
+            type: string
+      additionalProperties: true
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: 'HTTP Basic Authentication. Use your KOMOJU API key as the username and leave the password empty (for example `curl -u secret_key: ...`). Secret keys grant full access; publishable keys are limited to creating tokens and paying for sessions. Separate live and test key pairs exist per merchant.'

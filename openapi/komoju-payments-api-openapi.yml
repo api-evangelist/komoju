@@ -1,0 +1,420 @@
+openapi: 3.0.3
+info:
+  title: KOMOJU Barcodes Payments API
+  description: 'KOMOJU is a Japan-focused global payment gateway operated by Degica. The REST API accepts payments across Japanese and international payment methods - credit cards, convenience store (konbini), bank transfer, Pay-easy (ATM), and e-money / mobile wallets such as PayPay, Merpay, au PAY, Rakuten Pay, LINE Pay, Alipay, and WeChat Pay - plus a hosted checkout (Sessions), tokenization, saved customers, subscriptions, and webhook events.
+
+
+    Base URL: https://komoju.com/api/v1. Authentication is HTTP Basic: send your secret (or publishable, where allowed) API key as the username and leave the password empty (for example `curl -u secret_key: ...`). Separate live and test key pairs are issued per merchant account. POST requests support idempotency via the `X-KOMOJU-IDEMPOTENCY` header, and an optional `X-KOMOJU-API-VERSION` header pins the API version.
+
+
+    This description is grounded in the public KOMOJU API reference (doc.komoju.com). Paths, methods, and authentication are confirmed against that reference. Request/response schemas below are a representative, partly modeled subset - some object properties are simplified or marked additionalProperties where the full field list is extensive; consult the official reference for exhaustive field-level detail.'
+  version: '1.0'
+  contact:
+    name: KOMOJU (Degica)
+    url: https://en.komoju.com
+  license:
+    name: Proprietary
+    url: https://en.komoju.com/terms/
+servers:
+- url: https://komoju.com/api/v1
+  description: KOMOJU API (live and test share this host; the key pair selects the environment)
+security:
+- basicAuth: []
+tags:
+- name: Payments
+  description: Create, capture, refund, cancel, and query payments across all payment methods.
+paths:
+  /payments:
+    get:
+      operationId: listPayments
+      tags:
+      - Payments
+      summary: List payments
+      description: Retrieves a paginated list of payments. Supports pagination via `page` and `per_page`, filtering by `currency`, `external_order_num`, and `status`, and a time range via `start_time` and `end_time`.
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/PerPage'
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - pending
+          - authorized
+          - captured
+          - refunded
+          - cancelled
+          - expired
+          - failed
+      - name: currency
+        in: query
+        required: false
+        schema:
+          type: string
+          example: JPY
+      responses:
+        '200':
+          description: A paginated list of payments.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createPayment
+      tags:
+      - Payments
+      summary: Create a payment
+      description: Creates a payment for a given `amount` and `currency`. Provide either `payment_details` (a payment method type plus its attributes, or a token string) for a one-time payment, or a `customer` ID to charge a saved payment method - but not both. Set `capture` to false to authorize now and capture later (two-step capture).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreateInput'
+      responses:
+        '200':
+          description: The created payment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+  /payments/{id}:
+    parameters:
+    - $ref: '#/components/parameters/PaymentId'
+    get:
+      operationId: showPayment
+      tags:
+      - Payments
+      summary: Show a payment
+      description: Retrieves a single payment object by its `id`.
+      responses:
+        '200':
+          description: The requested payment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updatePayment
+      tags:
+      - Payments
+      summary: Update a payment
+      description: Updates a payment. Only `description` and `metadata` can be changed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                metadata:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '200':
+          description: The updated payment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /payments/{id}/capture:
+    parameters:
+    - $ref: '#/components/parameters/PaymentId'
+    post:
+      operationId: capturePayment
+      tags:
+      - Payments
+      summary: Capture a payment
+      description: Captures a previously authorized payment. Only works when the payment was created with `capture` set to false, or via a session with `capture` set to `manual`.
+      responses:
+        '200':
+          description: The captured payment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /payments/{id}/refund:
+    parameters:
+    - $ref: '#/components/parameters/PaymentId'
+    post:
+      operationId: refundPayment
+      tags:
+      - Payments
+      summary: Refund a payment
+      description: Refunds an amount from an existing payment. If no `amount` is specified, the whole payment is refunded.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: integer
+                  description: Amount to refund in the smallest currency unit. Omit to refund in full.
+                description:
+                  type: string
+      responses:
+        '200':
+          description: The refunded payment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /payments/{id}/cancel:
+    parameters:
+    - $ref: '#/components/parameters/PaymentId'
+    post:
+      operationId: cancelPayment
+      tags:
+      - Payments
+      summary: Cancel a payment
+      description: Cancels a payment. The payment must be in a `pending` or `authorized` state in order to be cancelled.
+      responses:
+        '200':
+          description: The cancelled payment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /payments/{id}/refund_request:
+    parameters:
+    - $ref: '#/components/parameters/PaymentId'
+    post:
+      operationId: createRefundRequest
+      tags:
+      - Payments
+      summary: Create a refund request
+      description: Requests that a payment be refunded manually. Used for payment methods that do not support automatic refunds, such as konbini. A destination bank account must be specified. The refund is processed manually at a later date and may be rejected.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: integer
+                bank_account:
+                  type: object
+                  description: Destination bank account for the manual refund.
+                  additionalProperties: true
+      responses:
+        '200':
+          description: The refund request result.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 1
+    PaymentId:
+      name: id
+      in: path
+      required: true
+      description: The payment ID.
+      schema:
+        type: string
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 25
+  responses:
+    Unauthorized:
+      description: Invalid authorization (missing or invalid API key).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnprocessableEntity:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    PaymentCreateInput:
+      type: object
+      required:
+      - amount
+      - currency
+      properties:
+        amount:
+          type: integer
+          description: Amount in the smallest currency unit (for JPY, this is yen).
+          example: 1000
+        currency:
+          type: string
+          example: JPY
+        payment_details:
+          $ref: '#/components/schemas/PaymentDetails'
+        customer:
+          type: string
+          description: A saved customer ID. Mutually exclusive with payment_details.
+        capture:
+          type: boolean
+          description: Set to false to authorize now and capture later.
+          default: true
+        external_order_num:
+          type: string
+        description:
+          type: string
+        metadata:
+          type: object
+          additionalProperties: true
+    PaymentDetails:
+      description: Payment method details. Either an object whose `type` selects the method (credit_card, konbini, bank_transfer, pay_easy, paypay, merpay, au_pay, rakutenpay, linepay, alipay, wechatpay, paidy, ...) plus the attributes for that method, or a token string from Create Token / Create Secure Token.
+      oneOf:
+      - type: string
+        description: A token or secure token ID.
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - credit_card
+            - konbini
+            - bank_transfer
+            - pay_easy
+            - paypay
+            - merpay
+            - au_pay
+            - rakutenpay
+            - linepay
+            - alipay
+            - wechatpay
+            - paidy
+        additionalProperties: true
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+        resource:
+          type: string
+          example: payment
+        status:
+          type: string
+          enum:
+          - pending
+          - authorized
+          - captured
+          - refunded
+          - cancelled
+          - expired
+          - failed
+        amount:
+          type: integer
+        currency:
+          type: string
+        payment_deadline:
+          type: string
+          format: date-time
+        payment_details:
+          type: object
+          additionalProperties: true
+        payment_method_fee:
+          type: integer
+        total:
+          type: integer
+        customer:
+          type: string
+          nullable: true
+        refunds:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        refunded_at:
+          type: string
+          format: date-time
+          nullable: true
+        external_order_num:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+    PaymentList:
+      type: object
+      properties:
+        total:
+          type: integer
+        page:
+          type: integer
+        per_page:
+          type: integer
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            param:
+              type: string
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: 'HTTP Basic Authentication. Use your KOMOJU API key as the username and leave the password empty (for example `curl -u secret_key: ...`). Secret keys grant full access; publishable keys are limited to creating tokens and paying for sessions. Separate live and test key pairs exist per merchant.'

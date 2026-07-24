@@ -1,0 +1,208 @@
+openapi: 3.0.3
+info:
+  title: KOMOJU Barcodes Tokens API
+  description: 'KOMOJU is a Japan-focused global payment gateway operated by Degica. The REST API accepts payments across Japanese and international payment methods - credit cards, convenience store (konbini), bank transfer, Pay-easy (ATM), and e-money / mobile wallets such as PayPay, Merpay, au PAY, Rakuten Pay, LINE Pay, Alipay, and WeChat Pay - plus a hosted checkout (Sessions), tokenization, saved customers, subscriptions, and webhook events.
+
+
+    Base URL: https://komoju.com/api/v1. Authentication is HTTP Basic: send your secret (or publishable, where allowed) API key as the username and leave the password empty (for example `curl -u secret_key: ...`). Separate live and test key pairs are issued per merchant account. POST requests support idempotency via the `X-KOMOJU-IDEMPOTENCY` header, and an optional `X-KOMOJU-API-VERSION` header pins the API version.
+
+
+    This description is grounded in the public KOMOJU API reference (doc.komoju.com). Paths, methods, and authentication are confirmed against that reference. Request/response schemas below are a representative, partly modeled subset - some object properties are simplified or marked additionalProperties where the full field list is extensive; consult the official reference for exhaustive field-level detail.'
+  version: '1.0'
+  contact:
+    name: KOMOJU (Degica)
+    url: https://en.komoju.com
+  license:
+    name: Proprietary
+    url: https://en.komoju.com/terms/
+servers:
+- url: https://komoju.com/api/v1
+  description: KOMOJU API (live and test share this host; the key pair selects the environment)
+security:
+- basicAuth: []
+tags:
+- name: Tokens
+  description: Tokenize payment details (short-term tokens and 3DS secure tokens).
+paths:
+  /tokens:
+    post:
+      operationId: createToken
+      tags:
+      - Tokens
+      summary: Create a token
+      description: Creates a token from the given `payment_details`. Best made directly from a client application so sensitive card data never touches your server. The resulting token string can be used as `payment_details` in a later payment. May be called with a publishable key.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_details:
+                  $ref: '#/components/schemas/PaymentDetails'
+                currency:
+                  type: string
+                  description: Optional currency the token is locked to.
+      responses:
+        '200':
+          description: The created token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+  /secure_tokens:
+    post:
+      operationId: createSecureToken
+      tags:
+      - Tokens
+      summary: Create a secure token (3DS)
+      description: Creates a SecureToken from credit card `payment_details` or a `customer` ID. The response includes an authentication URL for 3D Secure. Once authenticated, the secure token ID can be used as `payment_details` in a later payment.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_details:
+                  $ref: '#/components/schemas/PaymentDetails'
+                customer:
+                  type: string
+                return_url:
+                  type: string
+                  format: uri
+      responses:
+        '200':
+          description: The created secure token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecureToken'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+  /secure_tokens/{id}:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      operationId: showSecureToken
+      tags:
+      - Tokens
+      summary: Show a secure token
+      description: Retrieves a single SecureToken object by its `id`.
+      responses:
+        '200':
+          description: The requested secure token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecureToken'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    Unauthorized:
+      description: Invalid authorization (missing or invalid API key).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnprocessableEntity:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    PaymentDetails:
+      description: Payment method details. Either an object whose `type` selects the method (credit_card, konbini, bank_transfer, pay_easy, paypay, merpay, au_pay, rakutenpay, linepay, alipay, wechatpay, paidy, ...) plus the attributes for that method, or a token string from Create Token / Create Secure Token.
+      oneOf:
+      - type: string
+        description: A token or secure token ID.
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - credit_card
+            - konbini
+            - bank_transfer
+            - pay_easy
+            - paypay
+            - merpay
+            - au_pay
+            - rakutenpay
+            - linepay
+            - alipay
+            - wechatpay
+            - paidy
+        additionalProperties: true
+    Token:
+      type: object
+      properties:
+        id:
+          type: string
+        resource:
+          type: string
+          example: token
+        verification_status:
+          type: string
+        payment_details:
+          type: object
+          additionalProperties: true
+    SecureToken:
+      type: object
+      properties:
+        id:
+          type: string
+        resource:
+          type: string
+          example: secure_token
+        verification_status:
+          type: string
+          enum:
+          - OK
+          - NEEDS_VERIFY
+          - ERRORED
+          - SKIPPED
+        authentication_url:
+          type: string
+          format: uri
+          nullable: true
+        payment_details:
+          type: object
+          additionalProperties: true
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            param:
+              type: string
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: 'HTTP Basic Authentication. Use your KOMOJU API key as the username and leave the password empty (for example `curl -u secret_key: ...`). Secret keys grant full access; publishable keys are limited to creating tokens and paying for sessions. Separate live and test key pairs exist per merchant.'
