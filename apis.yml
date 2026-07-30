@@ -10,7 +10,20 @@ description: KOMOJU is a Japan-focused global payment gateway operated by Degica
   checkout (Sessions), tokenization, saved customers, subscriptions, and webhook events.
   Base URL is https://komoju.com/api/v1 with HTTP Basic authentication using a secret
   or publishable API key.
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: paid
+  onboarding: open
+  trial: false
+  try_now: false
+  public: true
+  label: Paid · Open access
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/komoju.png
 tags:
 - Payments
 - Payment Gateway
@@ -26,143 +39,326 @@ created: '2026-07-12'
 modified: '2026-07-12'
 specificationVersion: '0.19'
 apis:
-- aid: komoju:komoju-payments-api
-  name: KOMOJU Payments API
-  tags:
-  - Payments
-  - Refunds
-  - Konbini
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+- aid: komoju:komoju-barcodes-api
+  name: KOMOJU Barcodes API
+  description: Konbini payment barcodes for compatible convenience-store payments.
   humanURL: https://doc.komoju.com/reference/payments
   baseURL: https://komoju.com/api/v1
-  properties:
-  - url: https://doc.komoju.com/docs/creating-payments-directly
-    type: Documentation
-  - url: https://doc.komoju.com/reference/payments
-    type: APIReference
-  - url: openapi/komoju-openapi.yml
-    type: OpenAPI
-  - url: collections/komoju.postman_collection.json
-    type: PostmanCollection
-  - url: collections/komoju.opencollection.json
-    type: OpenCollection
-  description: Create, capture, refund, cancel, update, and list payments across cards,
-    konbini, bank transfer, Pay-easy, and e-money wallets. Supports two-step capture
-    (authorize then capture) and manual refund requests for non-refundable methods
-    like konbini.
-- aid: komoju:komoju-sessions-api
-  name: KOMOJU Sessions API
   tags:
-  - Checkout
-  - Hosted Page
-  - Sessions
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://doc.komoju.com/reference/sessions
-  baseURL: https://komoju.com/api/v1
+  - Barcodes
   properties:
-  - url: https://doc.komoju.com/docs/hosted-page-integration-guide
-    type: Documentation
-  - url: https://doc.komoju.com/reference/sessions
-    type: APIReference
-  - url: openapi/komoju-openapi.yml
-    type: OpenAPI
-  description: Hosted checkout sessions that collect payment or customer details on a
-    KOMOJU-hosted page. Create, show, cancel, and pay for sessions in payment, customer,
-    or customer_payment mode.
-- aid: komoju:komoju-tokens-api
-  name: KOMOJU Tokens API
-  tags:
-  - Tokenization
-  - 3D Secure
-  - Cards
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://doc.komoju.com/reference/tokens
-  baseURL: https://komoju.com/api/v1
-  properties:
-  - url: https://doc.komoju.com/docs/tokenizing-payment-details
-    type: Documentation
-  - url: https://doc.komoju.com/reference/tokens
-    type: APIReference
-  - url: openapi/komoju-openapi.yml
-    type: OpenAPI
-  description: Tokenize payment details so sensitive card data never touches your server.
-    Create short-term tokens and 3D Secure secure tokens, and retrieve secure token
-    status for later use as payment details.
+  - type: OpenAPI
+    url: openapi/komoju-barcodes-api-openapi.yml
+  - type: Documentation
+    url: https://doc.komoju.com/docs/creating-payments-directly
+  - type: APIReference
+    url: https://doc.komoju.com/reference/payments
+  - type: PostmanCollection
+    url: collections/komoju.postman_collection.json
+  - type: OpenCollection
+    url: collections/komoju.opencollection.json
+  - type: Documentation
+    url: https://doc.komoju.com/docs/hosted-page-integration-guide
+  - type: APIReference
+    url: https://doc.komoju.com/reference/sessions
+  - type: Documentation
+    url: https://doc.komoju.com/docs/tokenizing-payment-details
+  - type: APIReference
+    url: https://doc.komoju.com/reference/tokens
+  - type: Documentation
+    url: https://doc.komoju.com/docs/long-term-tokens
+  - type: APIReference
+    url: https://doc.komoju.com/reference/createcustomer
+  - type: APIReference
+    url: https://doc.komoju.com/reference/subscriptions
+  - type: Documentation
+    url: https://doc.komoju.com/supported-payment-methods
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listpaymentmethods
+  - type: Documentation
+    url: https://doc.komoju.com/docs/webhooks
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listevents
 - aid: komoju:komoju-customers-api
   name: KOMOJU Customers API
+  description: Store and manage customers with saved payment details for reuse.
+  humanURL: https://doc.komoju.com/reference/payments
+  baseURL: https://komoju.com/api/v1
   tags:
   - Customers
-  - Saved Cards
-  - Recurring
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://doc.komoju.com/reference/createcustomer
-  baseURL: https://komoju.com/api/v1
   properties:
-  - url: https://doc.komoju.com/docs/long-term-tokens
-    type: Documentation
-  - url: https://doc.komoju.com/reference/createcustomer
-    type: APIReference
-  - url: openapi/komoju-openapi.yml
-    type: OpenAPI
-  description: Create, retrieve, update, list, and delete customers with securely stored
-    payment details. A saved customer ID can be charged directly in place of raw payment
-    details for delayed billing and repeat purchases.
-- aid: komoju:komoju-subscriptions-api
-  name: KOMOJU Subscriptions API
-  tags:
-  - Subscriptions
-  - Recurring Payments
-  - Billing
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://doc.komoju.com/reference/subscriptions
-  baseURL: https://komoju.com/api/v1
-  properties:
-  - url: https://doc.komoju.com/reference/subscriptions
-    type: APIReference
-  - url: openapi/komoju-openapi.yml
-    type: OpenAPI
-  description: Recurring payments charged against a saved customer on a weekly, monthly,
-    or yearly period. Create, show, list, and delete subscriptions; subscriptions are
-    immutable once created.
-- aid: komoju:komoju-payment-methods-api
-  name: KOMOJU Payment Methods API
-  tags:
-  - Payment Methods
-  - Konbini
-  - E-Money
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://doc.komoju.com/reference/listpaymentmethods
-  baseURL: https://komoju.com/api/v1
-  properties:
-  - url: https://doc.komoju.com/supported-payment-methods
-    type: Documentation
-  - url: https://doc.komoju.com/reference/listpaymentmethods
-    type: APIReference
-  - url: openapi/komoju-openapi.yml
-    type: OpenAPI
-  description: Lists the payment methods available to the authenticated merchant for a
-    given amount and currency - credit_card, konbini, bank_transfer, pay_easy, paypay,
-    merpay, au_pay, rakutenpay, linepay, alipay, wechatpay, and paidy - plus konbini
-    barcode retrieval for compatible payments.
+  - type: OpenAPI
+    url: openapi/komoju-customers-api-openapi.yml
+  - type: Documentation
+    url: https://doc.komoju.com/docs/creating-payments-directly
+  - type: APIReference
+    url: https://doc.komoju.com/reference/payments
+  - type: PostmanCollection
+    url: collections/komoju.postman_collection.json
+  - type: OpenCollection
+    url: collections/komoju.opencollection.json
+  - type: Documentation
+    url: https://doc.komoju.com/docs/hosted-page-integration-guide
+  - type: APIReference
+    url: https://doc.komoju.com/reference/sessions
+  - type: Documentation
+    url: https://doc.komoju.com/docs/tokenizing-payment-details
+  - type: APIReference
+    url: https://doc.komoju.com/reference/tokens
+  - type: Documentation
+    url: https://doc.komoju.com/docs/long-term-tokens
+  - type: APIReference
+    url: https://doc.komoju.com/reference/createcustomer
+  - type: APIReference
+    url: https://doc.komoju.com/reference/subscriptions
+  - type: Documentation
+    url: https://doc.komoju.com/supported-payment-methods
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listpaymentmethods
+  - type: Documentation
+    url: https://doc.komoju.com/docs/webhooks
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listevents
 - aid: komoju:komoju-events-api
   name: KOMOJU Events API
-  tags:
-  - Webhooks
-  - Events
-  - Notifications
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://doc.komoju.com/reference/listevents
+  description: Webhook events emitted by KOMOJU, queryable after the fact.
+  humanURL: https://doc.komoju.com/reference/payments
   baseURL: https://komoju.com/api/v1
+  tags:
+  - Events
   properties:
-  - url: https://doc.komoju.com/docs/webhooks
-    type: Documentation
-  - url: https://doc.komoju.com/reference/listevents
-    type: APIReference
-  - url: openapi/komoju-openapi.yml
-    type: OpenAPI
-  description: Query the webhook events KOMOJU emits (payment.authorized, payment.captured,
-    payment.refunded, payment.failed, payment.marked.as.fraud, and more). Webhooks are
-    delivered as signed HTTP POSTs verified via an X-Komoju-Signature HMAC header.
+  - type: OpenAPI
+    url: openapi/komoju-events-api-openapi.yml
+  - type: Documentation
+    url: https://doc.komoju.com/docs/creating-payments-directly
+  - type: APIReference
+    url: https://doc.komoju.com/reference/payments
+  - type: PostmanCollection
+    url: collections/komoju.postman_collection.json
+  - type: OpenCollection
+    url: collections/komoju.opencollection.json
+  - type: Documentation
+    url: https://doc.komoju.com/docs/hosted-page-integration-guide
+  - type: APIReference
+    url: https://doc.komoju.com/reference/sessions
+  - type: Documentation
+    url: https://doc.komoju.com/docs/tokenizing-payment-details
+  - type: APIReference
+    url: https://doc.komoju.com/reference/tokens
+  - type: Documentation
+    url: https://doc.komoju.com/docs/long-term-tokens
+  - type: APIReference
+    url: https://doc.komoju.com/reference/createcustomer
+  - type: APIReference
+    url: https://doc.komoju.com/reference/subscriptions
+  - type: Documentation
+    url: https://doc.komoju.com/supported-payment-methods
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listpaymentmethods
+  - type: Documentation
+    url: https://doc.komoju.com/docs/webhooks
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listevents
+- aid: komoju:komoju-payment-methods-api
+  name: KOMOJU Payment Methods API
+  description: List the payment methods available to the authenticated merchant.
+  humanURL: https://doc.komoju.com/reference/payments
+  baseURL: https://komoju.com/api/v1
+  tags:
+  - Payment Methods
+  properties:
+  - type: OpenAPI
+    url: openapi/komoju-payment-methods-api-openapi.yml
+  - type: Documentation
+    url: https://doc.komoju.com/docs/creating-payments-directly
+  - type: APIReference
+    url: https://doc.komoju.com/reference/payments
+  - type: PostmanCollection
+    url: collections/komoju.postman_collection.json
+  - type: OpenCollection
+    url: collections/komoju.opencollection.json
+  - type: Documentation
+    url: https://doc.komoju.com/docs/hosted-page-integration-guide
+  - type: APIReference
+    url: https://doc.komoju.com/reference/sessions
+  - type: Documentation
+    url: https://doc.komoju.com/docs/tokenizing-payment-details
+  - type: APIReference
+    url: https://doc.komoju.com/reference/tokens
+  - type: Documentation
+    url: https://doc.komoju.com/docs/long-term-tokens
+  - type: APIReference
+    url: https://doc.komoju.com/reference/createcustomer
+  - type: APIReference
+    url: https://doc.komoju.com/reference/subscriptions
+  - type: Documentation
+    url: https://doc.komoju.com/supported-payment-methods
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listpaymentmethods
+  - type: Documentation
+    url: https://doc.komoju.com/docs/webhooks
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listevents
+- aid: komoju:komoju-payments-api
+  name: KOMOJU Payments API
+  description: Create, capture, refund, cancel, and query payments across all payment methods.
+  humanURL: https://doc.komoju.com/reference/payments
+  baseURL: https://komoju.com/api/v1
+  tags:
+  - Payments
+  properties:
+  - type: OpenAPI
+    url: openapi/komoju-payments-api-openapi.yml
+  - type: Documentation
+    url: https://doc.komoju.com/docs/creating-payments-directly
+  - type: APIReference
+    url: https://doc.komoju.com/reference/payments
+  - type: PostmanCollection
+    url: collections/komoju.postman_collection.json
+  - type: OpenCollection
+    url: collections/komoju.opencollection.json
+  - type: Documentation
+    url: https://doc.komoju.com/docs/hosted-page-integration-guide
+  - type: APIReference
+    url: https://doc.komoju.com/reference/sessions
+  - type: Documentation
+    url: https://doc.komoju.com/docs/tokenizing-payment-details
+  - type: APIReference
+    url: https://doc.komoju.com/reference/tokens
+  - type: Documentation
+    url: https://doc.komoju.com/docs/long-term-tokens
+  - type: APIReference
+    url: https://doc.komoju.com/reference/createcustomer
+  - type: APIReference
+    url: https://doc.komoju.com/reference/subscriptions
+  - type: Documentation
+    url: https://doc.komoju.com/supported-payment-methods
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listpaymentmethods
+  - type: Documentation
+    url: https://doc.komoju.com/docs/webhooks
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listevents
+- aid: komoju:komoju-sessions-api
+  name: KOMOJU Sessions API
+  description: Hosted checkout sessions that collect payment or customer details.
+  humanURL: https://doc.komoju.com/reference/payments
+  baseURL: https://komoju.com/api/v1
+  tags:
+  - Sessions
+  properties:
+  - type: OpenAPI
+    url: openapi/komoju-sessions-api-openapi.yml
+  - type: Documentation
+    url: https://doc.komoju.com/docs/creating-payments-directly
+  - type: APIReference
+    url: https://doc.komoju.com/reference/payments
+  - type: PostmanCollection
+    url: collections/komoju.postman_collection.json
+  - type: OpenCollection
+    url: collections/komoju.opencollection.json
+  - type: Documentation
+    url: https://doc.komoju.com/docs/hosted-page-integration-guide
+  - type: APIReference
+    url: https://doc.komoju.com/reference/sessions
+  - type: Documentation
+    url: https://doc.komoju.com/docs/tokenizing-payment-details
+  - type: APIReference
+    url: https://doc.komoju.com/reference/tokens
+  - type: Documentation
+    url: https://doc.komoju.com/docs/long-term-tokens
+  - type: APIReference
+    url: https://doc.komoju.com/reference/createcustomer
+  - type: APIReference
+    url: https://doc.komoju.com/reference/subscriptions
+  - type: Documentation
+    url: https://doc.komoju.com/supported-payment-methods
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listpaymentmethods
+  - type: Documentation
+    url: https://doc.komoju.com/docs/webhooks
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listevents
+- aid: komoju:komoju-subscriptions-api
+  name: KOMOJU Subscriptions API
+  description: Recurring payments charged against a saved customer.
+  humanURL: https://doc.komoju.com/reference/payments
+  baseURL: https://komoju.com/api/v1
+  tags:
+  - Subscriptions
+  properties:
+  - type: OpenAPI
+    url: openapi/komoju-subscriptions-api-openapi.yml
+  - type: Documentation
+    url: https://doc.komoju.com/docs/creating-payments-directly
+  - type: APIReference
+    url: https://doc.komoju.com/reference/payments
+  - type: PostmanCollection
+    url: collections/komoju.postman_collection.json
+  - type: OpenCollection
+    url: collections/komoju.opencollection.json
+  - type: Documentation
+    url: https://doc.komoju.com/docs/hosted-page-integration-guide
+  - type: APIReference
+    url: https://doc.komoju.com/reference/sessions
+  - type: Documentation
+    url: https://doc.komoju.com/docs/tokenizing-payment-details
+  - type: APIReference
+    url: https://doc.komoju.com/reference/tokens
+  - type: Documentation
+    url: https://doc.komoju.com/docs/long-term-tokens
+  - type: APIReference
+    url: https://doc.komoju.com/reference/createcustomer
+  - type: APIReference
+    url: https://doc.komoju.com/reference/subscriptions
+  - type: Documentation
+    url: https://doc.komoju.com/supported-payment-methods
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listpaymentmethods
+  - type: Documentation
+    url: https://doc.komoju.com/docs/webhooks
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listevents
+- aid: komoju:komoju-tokens-api
+  name: KOMOJU Tokens API
+  description: Tokenize payment details (short-term tokens and 3DS secure tokens).
+  humanURL: https://doc.komoju.com/reference/payments
+  baseURL: https://komoju.com/api/v1
+  tags:
+  - Tokens
+  properties:
+  - type: OpenAPI
+    url: openapi/komoju-tokens-api-openapi.yml
+  - type: Documentation
+    url: https://doc.komoju.com/docs/creating-payments-directly
+  - type: APIReference
+    url: https://doc.komoju.com/reference/payments
+  - type: PostmanCollection
+    url: collections/komoju.postman_collection.json
+  - type: OpenCollection
+    url: collections/komoju.opencollection.json
+  - type: Documentation
+    url: https://doc.komoju.com/docs/hosted-page-integration-guide
+  - type: APIReference
+    url: https://doc.komoju.com/reference/sessions
+  - type: Documentation
+    url: https://doc.komoju.com/docs/tokenizing-payment-details
+  - type: APIReference
+    url: https://doc.komoju.com/reference/tokens
+  - type: Documentation
+    url: https://doc.komoju.com/docs/long-term-tokens
+  - type: APIReference
+    url: https://doc.komoju.com/reference/createcustomer
+  - type: APIReference
+    url: https://doc.komoju.com/reference/subscriptions
+  - type: Documentation
+    url: https://doc.komoju.com/supported-payment-methods
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listpaymentmethods
+  - type: Documentation
+    url: https://doc.komoju.com/docs/webhooks
+  - type: APIReference
+    url: https://doc.komoju.com/reference/listevents
 common:
 - type: AgenticAccess
   url: agentic-access/komoju-agentic-access.yml
