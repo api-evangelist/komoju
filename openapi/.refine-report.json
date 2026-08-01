@@ -1,0 +1,28 @@
+{
+  "provider": "komoju",
+  "sources": [
+    "komoju-barcodes-api-openapi.yml",
+    "komoju-customers-api-openapi.yml",
+    "komoju-events-api-openapi.yml",
+    "komoju-payment-methods-api-openapi.yml",
+    "komoju-payments-api-openapi.yml",
+    "komoju-sessions-api-openapi.yml",
+    "komoju-subscriptions-api-openapi.yml",
+    "komoju-tokens-api-openapi.yml"
+  ],
+  "outputs": [
+    "komoju-barcodes-api-openapi.yml",
+    "komoju-customers-api-openapi.yml",
+    "komoju-events-api-openapi.yml",
+    "komoju-payment-methods-api-openapi.yml",
+    "komoju-payments-api-openapi.yml",
+    "komoju-sessions-api-openapi.yml",
+    "komoju-subscriptions-api-openapi.yml",
+    "komoju-tokens-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
