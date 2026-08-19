@@ -1,0 +1,101 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "KOMOJU Barcodes Sessions API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Sessions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create a session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/sessions",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a hosted checkout session. Three modes are supported: `payment` (default; creates a payment when the user completes the session), `customer` (creates or updates a customer for delayed billing or subscriptions), and `customer_payment` (charges upfront and saves the customer's payment details in one flow)."
+        },
+        {
+          "info": {
+            "name": "Show a session",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/sessions/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The session ID."
+              }
+            ]
+          },
+          "docs": "Retrieves a session by its ID. A session's status changes when the user completes or cancels payment; poll this endpoint or listen via webhooks."
+        },
+        {
+          "info": {
+            "name": "Cancel a session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/sessions/:id/cancel",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The session ID."
+              }
+            ]
+          },
+          "docs": "Cancels a session."
+        },
+        {
+          "info": {
+            "name": "Pay for a session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/sessions/:id/pay",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The session ID."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Provides customer payment details to pay for a session directly. This endpoint may be called with a publishable key."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,199 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "KOMOJU Barcodes Payments API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Payments",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List payments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/payments",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Retrieves a paginated list of payments. Supports pagination via `page` and `per_page`, filtering by `currency`, `external_order_num`, and `status`, and a time range via `start_time` and `end_time`."
+        },
+        {
+          "info": {
+            "name": "Create a payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/payments",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a payment for a given `amount` and `currency`. Provide either `payment_details` (a payment method type plus its attributes, or a token string) for a one-time payment, or a `customer` ID to charge a saved payment method - but not both. Set `capture` to false to authorize now and capture later (two-step capture)."
+        },
+        {
+          "info": {
+            "name": "Show a payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/payments/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The payment ID."
+              }
+            ]
+          },
+          "docs": "Retrieves a single payment object by its `id`."
+        },
+        {
+          "info": {
+            "name": "Update a payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://komoju.com/api/v1/payments/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The payment ID."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates a payment. Only `description` and `metadata` can be changed."
+        },
+        {
+          "info": {
+            "name": "Capture a payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/payments/:id/capture",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The payment ID."
+              }
+            ]
+          },
+          "docs": "Captures a previously authorized payment. Only works when the payment was created with `capture` set to false, or via a session with `capture` set to `manual`."
+        },
+        {
+          "info": {
+            "name": "Refund a payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/payments/:id/refund",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The payment ID."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Refunds an amount from an existing payment. If no `amount` is specified, the whole payment is refunded."
+        },
+        {
+          "info": {
+            "name": "Cancel a payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/payments/:id/cancel",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The payment ID."
+              }
+            ]
+          },
+          "docs": "Cancels a payment. The payment must be in a `pending` or `authorized` state in order to be cancelled."
+        },
+        {
+          "info": {
+            "name": "Create a refund request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/payments/:id/refund_request",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The payment ID."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Requests that a payment be refunded manually. Used for payment methods that do not support automatic refunds, such as konbini. A destination bank account must be specified. The refund is processed manually at a later date and may be rejected."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

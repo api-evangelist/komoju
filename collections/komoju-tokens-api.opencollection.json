@@ -1,0 +1,73 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "KOMOJU Barcodes Tokens API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Tokens",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create a token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/tokens",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a token from the given `payment_details`. Best made directly from a client application so sensitive card data never touches your server. The resulting token string can be used as `payment_details` in a later payment. May be called with a publishable key."
+        },
+        {
+          "info": {
+            "name": "Create a secure token (3DS)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://komoju.com/api/v1/secure_tokens",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a SecureToken from credit card `payment_details` or a `customer` ID. The response includes an authentication URL for 3D Secure. Once authenticated, the secure token ID can be used as `payment_details` in a later payment."
+        },
+        {
+          "info": {
+            "name": "Show a secure token",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/secure_tokens/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieves a single SecureToken object by its `id`."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,43 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "KOMOJU Barcodes API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Barcodes",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Show a konbini barcode",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://komoju.com/api/v1/barcodes/:payment_id",
+            "params": [
+              {
+                "name": "payment_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Fetches the latest barcode for a compatible konbini payment. If the barcode is still generating, the response has `status` of `pending` and a `retry_after` value (seconds) to wait before retrying."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
