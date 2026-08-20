@@ -125,6 +125,8 @@ apis:
   humanURL: https://doc.komoju.com/reference/payments
   baseURL: https://komoju.com/api/v1
   tags:
+  - Event
+  tags_raw:
   - Events
   properties:
   - type: OpenAPI
@@ -285,6 +287,8 @@ apis:
   humanURL: https://doc.komoju.com/reference/payments
   baseURL: https://komoju.com/api/v1
   tags:
+  - Subscription
+  tags_raw:
   - Subscriptions
   properties:
   - type: OpenAPI
