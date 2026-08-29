@@ -10,6 +10,18 @@ description: KOMOJU is a Japan-focused global payment gateway operated by Degica
   checkout (Sessions), tokenization, saved customers, subscriptions, and webhook events.
   Base URL is https://komoju.com/api/v1 with HTTP Basic authentication using a secret
   or publishable API key.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: paid
   onboarding: open
