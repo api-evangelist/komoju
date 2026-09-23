@@ -1,14 +1,7 @@
 {
   "provider": "komoju",
   "sources": [
-    "komoju-barcodes-api-openapi.yml",
-    "komoju-customers-api-openapi.yml",
-    "komoju-events-api-openapi.yml",
-    "komoju-payment-methods-api-openapi.yml",
-    "komoju-payments-api-openapi.yml",
-    "komoju-sessions-api-openapi.yml",
-    "komoju-subscriptions-api-openapi.yml",
-    "komoju-tokens-api-openapi.yml"
+    "_original/komoju-openapi.yml"
   ],
   "outputs": [
     "komoju-barcodes-api-openapi.yml",
@@ -23,6 +16,19 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "komoju-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "komoju-barcodes-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "komoju-customers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "komoju-events-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "komoju-payment-methods-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "komoju-payments-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "komoju-sessions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "komoju-subscriptions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "komoju-tokens-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

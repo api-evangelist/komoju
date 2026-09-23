@@ -1,13 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: KOMOJU Barcodes Events API
-  description: 'KOMOJU is a Japan-focused global payment gateway operated by Degica. The REST API accepts payments across Japanese and international payment methods - credit cards, convenience store (konbini), bank transfer, Pay-easy (ATM), and e-money / mobile wallets such as PayPay, Merpay, au PAY, Rakuten Pay, LINE Pay, Alipay, and WeChat Pay - plus a hosted checkout (Sessions), tokenization, saved customers, subscriptions, and webhook events.
-
-
-    Base URL: https://komoju.com/api/v1. Authentication is HTTP Basic: send your secret (or publishable, where allowed) API key as the username and leave the password empty (for example `curl -u secret_key: ...`). Separate live and test key pairs are issued per merchant account. POST requests support idempotency via the `X-KOMOJU-IDEMPOTENCY` header, and an optional `X-KOMOJU-API-VERSION` header pins the API version.
-
-
-    This description is grounded in the public KOMOJU API reference (doc.komoju.com). Paths, methods, and authentication are confirmed against that reference. Request/response schemas below are a representative, partly modeled subset - some object properties are simplified or marked additionalProperties where the full field list is extensive; consult the official reference for exhaustive field-level detail.'
+  title: KOMOJU Events API
+  description: KOMOJU is a Japan-focused global payment gateway operated by Degica.
   version: '1.0'
   contact:
     name: KOMOJU (Degica)
@@ -73,47 +67,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
-  parameters:
-    Page:
-      name: page
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 1
-    PerPage:
-      name: per_page
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 25
-  responses:
-    Unauthorized:
-      description: Invalid authorization (missing or invalid API key).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    Error:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-            param:
-              type: string
     Event:
       type: object
       properties:
@@ -131,6 +85,46 @@ components:
         created_at:
           type: string
           format: date-time
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            param:
+              type: string
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Invalid authorization (missing or invalid API key).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 1
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 25
   securitySchemes:
     basicAuth:
       type: http

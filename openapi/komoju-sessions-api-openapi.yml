@@ -1,13 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: KOMOJU Barcodes Sessions API
-  description: 'KOMOJU is a Japan-focused global payment gateway operated by Degica. The REST API accepts payments across Japanese and international payment methods - credit cards, convenience store (konbini), bank transfer, Pay-easy (ATM), and e-money / mobile wallets such as PayPay, Merpay, au PAY, Rakuten Pay, LINE Pay, Alipay, and WeChat Pay - plus a hosted checkout (Sessions), tokenization, saved customers, subscriptions, and webhook events.
-
-
-    Base URL: https://komoju.com/api/v1. Authentication is HTTP Basic: send your secret (or publishable, where allowed) API key as the username and leave the password empty (for example `curl -u secret_key: ...`). Separate live and test key pairs are issued per merchant account. POST requests support idempotency via the `X-KOMOJU-IDEMPOTENCY` header, and an optional `X-KOMOJU-API-VERSION` header pins the API version.
-
-
-    This description is grounded in the public KOMOJU API reference (doc.komoju.com). Paths, methods, and authentication are confirmed against that reference. Request/response schemas below are a representative, partly modeled subset - some object properties are simplified or marked additionalProperties where the full field list is extensive; consult the official reference for exhaustive field-level detail.'
+  title: KOMOJU Sessions API
+  description: KOMOJU is a Japan-focused global payment gateway operated by Degica.
   version: '1.0'
   contact:
     name: KOMOJU (Degica)
@@ -119,6 +113,12 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     Unauthorized:
       description: Invalid authorization (missing or invalid API key).
       content:
@@ -127,12 +127,6 @@ components:
             $ref: '#/components/schemas/Error'
     UnprocessableEntity:
       description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
       content:
         application/json:
           schema:
@@ -161,51 +155,6 @@ components:
             - wechatpay
             - paidy
         additionalProperties: true
-    Session:
-      type: object
-      properties:
-        id:
-          type: string
-        resource:
-          type: string
-          example: session
-        mode:
-          type: string
-          enum:
-          - payment
-          - customer
-          - customer_payment
-        status:
-          type: string
-          enum:
-          - pending
-          - completed
-          - cancelled
-          - expired
-        amount:
-          type: integer
-        currency:
-          type: string
-        session_url:
-          type: string
-          format: uri
-          description: The hosted checkout URL to redirect the customer to.
-        return_url:
-          type: string
-          format: uri
-        payment:
-          type: object
-          nullable: true
-          additionalProperties: true
-        customer:
-          type: string
-          nullable: true
-        created_at:
-          type: string
-          format: date-time
-        expires_at:
-          type: string
-          format: date-time
     SessionCreateInput:
       type: object
       required:
@@ -259,6 +208,53 @@ components:
               type: string
             param:
               type: string
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        resource:
+          type: string
+          example: session
+        mode:
+          type: string
+          enum:
+          - payment
+          - customer
+          - customer_payment
+        status:
+          type: string
+          enum:
+          - pending
+          - completed
+          - cancelled
+          - expired
+        amount:
+          type: integer
+        currency:
+          type: string
+        session_url:
+          type: string
+          format: uri
+          description: The hosted checkout URL to redirect the customer to.
+        return_url:
+          type: string
+          format: uri
+        payment:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+        customer:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
   parameters:
     SessionId:
       name: id

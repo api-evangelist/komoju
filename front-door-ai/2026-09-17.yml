@@ -1,0 +1,25 @@
+# Front Door AI Index — komoju — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: komoju
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: en.komoju.com
+  final_host: en.komoju.com
+  ownership: own
+  owner: komoju
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 2
+  host_score: 2
+  density: 0.8
+  words: 2499
+  tiers:
+    agentic: 0
+    core: 2
+    model: 0
+  ambiguous: 0
+  top_terms:
+    AI: 2
