@@ -107,57 +107,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Invalid authorization (missing or invalid API key).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    UnprocessableEntity:
-      description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    Subscription:
-      type: object
-      properties:
-        id:
-          type: string
-        resource:
-          type: string
-          example: subscription
-        status:
-          type: string
-        customer:
-          type: string
-        amount:
-          type: integer
-        currency:
-          type: string
-        period:
-          type: string
-          enum:
-          - weekly
-          - monthly
-          - yearly
-        next_payment:
-          type: string
-          format: date-time
-        payment_details:
-          type: object
-          additionalProperties: true
-        created_at:
-          type: string
-          format: date-time
     Error:
       type: object
       properties:
@@ -196,14 +146,57 @@ components:
         metadata:
           type: object
           additionalProperties: true
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: string
+        resource:
+          type: string
+          example: subscription
+        status:
+          type: string
+        customer:
+          type: string
+        amount:
+          type: integer
+        currency:
+          type: string
+        period:
+          type: string
+          enum:
+          - weekly
+          - monthly
+          - yearly
+        next_payment:
+          type: string
+          format: date-time
+        payment_details:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Invalid authorization (missing or invalid API key).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnprocessableEntity:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
-    Page:
-      name: page
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 1
     PerPage:
       name: per_page
       in: query
@@ -211,6 +204,13 @@ components:
       schema:
         type: integer
         default: 25
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 1
   securitySchemes:
     basicAuth:
       type: http
