@@ -236,6 +236,83 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   schemas:
+    PaymentCreateInput:
+      type: object
+      required:
+      - amount
+      - currency
+      properties:
+        amount:
+          type: integer
+          description: Amount in the smallest currency unit (for JPY, this is yen).
+          example: 1000
+        currency:
+          type: string
+          example: JPY
+        payment_details:
+          $ref: '#/components/schemas/PaymentDetails'
+        customer:
+          type: string
+          description: A saved customer ID. Mutually exclusive with payment_details.
+        capture:
+          type: boolean
+          description: Set to false to authorize now and capture later.
+          default: true
+        external_order_num:
+          type: string
+        description:
+          type: string
+        metadata:
+          type: object
+          additionalProperties: true
+    PaymentList:
+      type: object
+      properties:
+        total:
+          type: integer
+        page:
+          type: integer
+        per_page:
+          type: integer
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            param:
+              type: string
+    PaymentDetails:
+      description: Payment method details. Either an object whose `type` selects the method (credit_card, konbini, bank_transfer, pay_easy, paypay, merpay, au_pay, rakutenpay, linepay, alipay, wechatpay, paidy, ...) plus the attributes for that method, or a token string from Create Token / Create Secure Token.
+      oneOf:
+      - type: string
+        description: A token or secure token ID.
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - credit_card
+            - konbini
+            - bank_transfer
+            - pay_easy
+            - paypay
+            - merpay
+            - au_pay
+            - rakutenpay
+            - linepay
+            - alipay
+            - wechatpay
+            - paidy
+        additionalProperties: true
     Payment:
       type: object
       properties:
@@ -292,92 +369,31 @@ components:
         created_at:
           type: string
           format: date-time
-    Error:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-            param:
-              type: string
-    PaymentCreateInput:
-      type: object
-      required:
-      - amount
-      - currency
-      properties:
-        amount:
-          type: integer
-          description: Amount in the smallest currency unit (for JPY, this is yen).
-          example: 1000
-        currency:
-          type: string
-          example: JPY
-        payment_details:
-          $ref: '#/components/schemas/PaymentDetails'
-        customer:
-          type: string
-          description: A saved customer ID. Mutually exclusive with payment_details.
-        capture:
-          type: boolean
-          description: Set to false to authorize now and capture later.
-          default: true
-        external_order_num:
-          type: string
-        description:
-          type: string
-        metadata:
-          type: object
-          additionalProperties: true
-    PaymentList:
-      type: object
-      properties:
-        total:
-          type: integer
-        page:
-          type: integer
-        per_page:
-          type: integer
-        resources:
-          type: array
-          items:
-            $ref: '#/components/schemas/Payment'
-    PaymentDetails:
-      description: Payment method details. Either an object whose `type` selects the method (credit_card, konbini, bank_transfer, pay_easy, paypay, merpay, au_pay, rakutenpay, linepay, alipay, wechatpay, paidy, ...) plus the attributes for that method, or a token string from Create Token / Create Secure Token.
-      oneOf:
-      - type: string
-        description: A token or secure token ID.
-      - type: object
-        properties:
-          type:
-            type: string
-            enum:
-            - credit_card
-            - konbini
-            - bank_transfer
-            - pay_easy
-            - paypay
-            - merpay
-            - au_pay
-            - rakutenpay
-            - linepay
-            - alipay
-            - wechatpay
-            - paidy
-        additionalProperties: true
+  parameters:
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 1
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 25
+    PaymentId:
+      name: id
+      in: path
+      required: true
+      description: The payment ID.
+      schema:
+        type: string
   responses:
     NotFound:
       description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Invalid authorization (missing or invalid API key).
       content:
         application/json:
           schema:
@@ -388,28 +404,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-  parameters:
-    PaymentId:
-      name: id
-      in: path
-      required: true
-      description: The payment ID.
-      schema:
-        type: string
-    PerPage:
-      name: per_page
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 25
-    Page:
-      name: page
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 1
+    Unauthorized:
+      description: Invalid authorization (missing or invalid API key).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     basicAuth:
       type: http

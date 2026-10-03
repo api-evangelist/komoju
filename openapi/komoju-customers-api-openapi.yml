@@ -136,7 +136,45 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 1
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 25
   schemas:
+    PaymentDetails:
+      description: Payment method details. Either an object whose `type` selects the method (credit_card, konbini, bank_transfer, pay_easy, paypay, merpay, au_pay, rakutenpay, linepay, alipay, wechatpay, paidy, ...) plus the attributes for that method, or a token string from Create Token / Create Secure Token.
+      oneOf:
+      - type: string
+        description: A token or secure token ID.
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - credit_card
+            - konbini
+            - bank_transfer
+            - pay_easy
+            - paypay
+            - merpay
+            - au_pay
+            - rakutenpay
+            - linepay
+            - alipay
+            - wechatpay
+            - paidy
+        additionalProperties: true
     Customer:
       type: object
       properties:
@@ -183,32 +221,9 @@ components:
         metadata:
           type: object
           additionalProperties: true
-    PaymentDetails:
-      description: Payment method details. Either an object whose `type` selects the method (credit_card, konbini, bank_transfer, pay_easy, paypay, merpay, au_pay, rakutenpay, linepay, alipay, wechatpay, paidy, ...) plus the attributes for that method, or a token string from Create Token / Create Secure Token.
-      oneOf:
-      - type: string
-        description: A token or secure token ID.
-      - type: object
-        properties:
-          type:
-            type: string
-            enum:
-            - credit_card
-            - konbini
-            - bank_transfer
-            - pay_easy
-            - paypay
-            - merpay
-            - au_pay
-            - rakutenpay
-            - linepay
-            - alipay
-            - wechatpay
-            - paidy
-        additionalProperties: true
   responses:
-    NotFound:
-      description: The requested resource was not found.
+    UnprocessableEntity:
+      description: The request payload failed validation.
       content:
         application/json:
           schema:
@@ -219,27 +234,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    UnprocessableEntity:
-      description: The request payload failed validation.
+    NotFound:
+      description: The requested resource was not found.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-  parameters:
-    PerPage:
-      name: per_page
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 25
-    Page:
-      name: page
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 1
   securitySchemes:
     basicAuth:
       type: http

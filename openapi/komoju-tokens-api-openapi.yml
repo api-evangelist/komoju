@@ -131,29 +131,6 @@ components:
               type: string
             param:
               type: string
-    SecureToken:
-      type: object
-      properties:
-        id:
-          type: string
-        resource:
-          type: string
-          example: secure_token
-        verification_status:
-          type: string
-          enum:
-          - OK
-          - NEEDS_VERIFY
-          - ERRORED
-          - SKIPPED
-        authentication_url:
-          type:
-          - string
-          - 'null'
-          format: uri
-        payment_details:
-          type: object
-          additionalProperties: true
     PaymentDetails:
       description: Payment method details. Either an object whose `type` selects the method (credit_card, konbini, bank_transfer, pay_easy, paypay, merpay, au_pay, rakutenpay, linepay, alipay, wechatpay, paidy, ...) plus the attributes for that method, or a token string from Create Token / Create Secure Token.
       oneOf:
@@ -177,6 +154,29 @@ components:
             - wechatpay
             - paidy
         additionalProperties: true
+    SecureToken:
+      type: object
+      properties:
+        id:
+          type: string
+        resource:
+          type: string
+          example: secure_token
+        verification_status:
+          type: string
+          enum:
+          - OK
+          - NEEDS_VERIFY
+          - ERRORED
+          - SKIPPED
+        authentication_url:
+          type:
+          - string
+          - 'null'
+          format: uri
+        payment_details:
+          type: object
+          additionalProperties: true
   responses:
     NotFound:
       description: The requested resource was not found.
@@ -184,14 +184,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Invalid authorization (missing or invalid API key).
+    UnprocessableEntity:
+      description: The request payload failed validation.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    UnprocessableEntity:
-      description: The request payload failed validation.
+    Unauthorized:
+      description: Invalid authorization (missing or invalid API key).
       content:
         application/json:
           schema:
