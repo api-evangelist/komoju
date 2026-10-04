@@ -387,6 +387,9 @@ apis:
   - type: APIReference
     url: https://doc.komoju.com/reference/listevents
 common:
+- type: CapabilityMap
+  url: capabilities/komoju-capability-edges.yml
+  name: KOMOJU Business Capability Map
 - type: AgenticAccess
   url: agentic-access/komoju-agentic-access.yml
 - type: DomainSecurity
