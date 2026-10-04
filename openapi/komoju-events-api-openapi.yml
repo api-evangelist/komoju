@@ -67,14 +67,20 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  responses:
+    Unauthorized:
+      description: Invalid authorization (missing or invalid API key).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
-    Page:
-      name: page
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 1
     PerPage:
       name: per_page
       in: query
@@ -82,19 +88,13 @@ components:
       schema:
         type: integer
         default: 25
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Invalid authorization (missing or invalid API key).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 1
   schemas:
     Error:
       type: object

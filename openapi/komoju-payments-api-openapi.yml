@@ -235,7 +235,41 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  parameters:
+    PaymentId:
+      name: id
+      in: path
+      required: true
+      description: The payment ID.
+      schema:
+        type: string
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 25
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 1
   schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            param:
+              type: string
     PaymentCreateInput:
       type: object
       required:
@@ -265,54 +299,6 @@ components:
         metadata:
           type: object
           additionalProperties: true
-    PaymentList:
-      type: object
-      properties:
-        total:
-          type: integer
-        page:
-          type: integer
-        per_page:
-          type: integer
-        resources:
-          type: array
-          items:
-            $ref: '#/components/schemas/Payment'
-    Error:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-            param:
-              type: string
-    PaymentDetails:
-      description: Payment method details. Either an object whose `type` selects the method (credit_card, konbini, bank_transfer, pay_easy, paypay, merpay, au_pay, rakutenpay, linepay, alipay, wechatpay, paidy, ...) plus the attributes for that method, or a token string from Create Token / Create Secure Token.
-      oneOf:
-      - type: string
-        description: A token or secure token ID.
-      - type: object
-        properties:
-          type:
-            type: string
-            enum:
-            - credit_card
-            - konbini
-            - bank_transfer
-            - pay_easy
-            - paypay
-            - merpay
-            - au_pay
-            - rakutenpay
-            - linepay
-            - alipay
-            - wechatpay
-            - paidy
-        additionalProperties: true
     Payment:
       type: object
       properties:
@@ -369,29 +355,49 @@ components:
         created_at:
           type: string
           format: date-time
-  parameters:
-    Page:
-      name: page
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 1
-    PerPage:
-      name: per_page
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 25
-    PaymentId:
-      name: id
-      in: path
-      required: true
-      description: The payment ID.
-      schema:
-        type: string
+    PaymentDetails:
+      description: Payment method details. Either an object whose `type` selects the method (credit_card, konbini, bank_transfer, pay_easy, paypay, merpay, au_pay, rakutenpay, linepay, alipay, wechatpay, paidy, ...) plus the attributes for that method, or a token string from Create Token / Create Secure Token.
+      oneOf:
+      - type: string
+        description: A token or secure token ID.
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - credit_card
+            - konbini
+            - bank_transfer
+            - pay_easy
+            - paypay
+            - merpay
+            - au_pay
+            - rakutenpay
+            - linepay
+            - alipay
+            - wechatpay
+            - paidy
+        additionalProperties: true
+    PaymentList:
+      type: object
+      properties:
+        total:
+          type: integer
+        page:
+          type: integer
+        per_page:
+          type: integer
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
   responses:
+    Unauthorized:
+      description: Invalid authorization (missing or invalid API key).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     NotFound:
       description: The requested resource was not found.
       content:
@@ -400,12 +406,6 @@ components:
             $ref: '#/components/schemas/Error'
     UnprocessableEntity:
       description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Invalid authorization (missing or invalid API key).
       content:
         application/json:
           schema:
