@@ -1,4 +1,4 @@
-# KOMOJU (komoju)
+# KOMOJU
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,190 +64,132 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-KOMOJU is a Japan-focused global payment gateway operated by Degica that lets web and e-commerce merchants accept a wide range of local and international payment methods through a single RESTful JSON API. It is especially strong on Japan-specific methods - convenience-store (konbini) cash payments, PayPay and other QR / e-money wallets, bank transfer, and Pay-easy (ATM) - alongside credit cards, Apple Pay, carrier billing, and cross-border wallets such as Alipay and WeChat Pay. Merchants integrate via a Hosted Page, Hosted Fields, or direct API.
+KOMOJU is a Japan-focused global payment gateway operated by Degica. Its REST API lets web and e-commerce merchants accept a wide range of local and international payment methods through one interface - credit cards, convenience store (konbini) cash payments, bank transfer, Pay-easy (ATM), and e-money / mobile wallets such as PayPay, Merpay, au PAY, Rakuten Pay, LINE Pay, Alipay, and WeChat Pay - plus a hosted checkout (Sessions), tokenization, saved customers, subscriptions, and webhook events. Base URL is https://komoju.com/api/v1 with HTTP Basic authentication using a secret or publishable API key.
 
-## Access Model
+**Areas:** Payments · Payment Gateway · Japan · Konbini · Cards · PayPay · Bank Transfers · E-Money · Checkout · Fintech
 
-KOMOJU is a **commercial payment gateway that requires a merchant account** - there is no fully anonymous public sandbox. Once you have an account you get **two key pairs, one for test and one for live**, each with a **secret key** and a **publishable key**:
+## KOMOJU on APIs.io
 
-- **Secret key** - full access to all API resources; keep it server-side only.
-- **Publishable key** - safe to expose client-side; limited to creating tokens and paying for sessions.
+Everything profiled for KOMOJU is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/komoju/](https://apis.io/providers/komoju/)** — or go straight to one of the APIs or properties below.
 
-All requests use **HTTP Basic Authentication**: send your API key as the username and leave the password **empty** (for example `curl -u secret_key: "https://komoju.com/api/v1/payments"`). The **test key pair** lets you exercise the full API against test payment methods before going live. No monthly or setup fees - KOMOJU charges per transaction.
+### APIs (8)
 
-**Base URL:** `https://komoju.com/api/v1`
+- [KOMOJU Barcodes API](https://apis.io/apis/komoju/komoju-barcodes-api/) — Konbini payment barcodes for compatible convenience-store payments.
+- [KOMOJU Customers API](https://apis.io/apis/komoju/komoju-customers-api/) — Store and manage customers with saved payment details for reuse.
+- [KOMOJU Events API](https://apis.io/apis/komoju/komoju-events-api/) — Webhook events emitted by KOMOJU, queryable after the fact.
+- [KOMOJU Payment Methods API](https://apis.io/apis/komoju/komoju-payment-methods-api/) — List the payment methods available to the authenticated merchant.
+- [KOMOJU Payments API](https://apis.io/apis/komoju/komoju-payments-api/) — Create, capture, refund, cancel, and query payments across all payment methods.
+- [KOMOJU Sessions API](https://apis.io/apis/komoju/komoju-sessions-api/) — Hosted checkout sessions that collect payment or customer details.
+- [KOMOJU Subscriptions API](https://apis.io/apis/komoju/komoju-subscriptions-api/) — Recurring payments charged against a saved customer.
+- [KOMOJU Tokens API](https://apis.io/apis/komoju/komoju-tokens-api/) — Tokenize payment details (short-term tokens and 3DS secure tokens).
 
-POST requests support idempotency via the `X-KOMOJU-IDEMPOTENCY` header, and the API version can be pinned with `X-KOMOJU-API-VERSION`.
+### Published properties
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/komoju/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/komoju/refs/heads/main/apis.yml)
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## Tags
+#### Agentic access (1)
 
-- Payments
-- Payment Gateway
-- Japan
-- Konbini
-- Cards
-- PayPay
-- Bank Transfer
-- E-Money
-- Checkout
-- Fintech
+Which operations an agent can call, which act, and which need a human in the loop.
 
-## Timestamps
+- [Komoju Agentic Access](https://apis.io/agentic-access/komoju/komoju-agentic-access/)
 
-- **Created:** 2026-07-12
-- **Modified:** 2026-07-12
+#### Collections (9)
 
-## APIs
+Postman and Open Collection request collections.
 
-### KOMOJU Payments API
+- [KOMOJU API](https://apis.io/collections/komoju/open-komoju/)
+- [KOMOJU Barcodes API](https://apis.io/collections/komoju/open-komoju-barcodes-api/)
+- [KOMOJU Barcodes Customers API](https://apis.io/collections/komoju/open-komoju-customers-api/)
+- [KOMOJU Barcodes Events API](https://apis.io/collections/komoju/open-komoju-events-api/)
+- [KOMOJU Barcodes Payment Methods API](https://apis.io/collections/komoju/open-komoju-payment-methods-api/)
+- [KOMOJU Barcodes Payments API](https://apis.io/collections/komoju/open-komoju-payments-api/)
+- [KOMOJU Barcodes Sessions API](https://apis.io/collections/komoju/open-komoju-sessions-api/)
+- [KOMOJU Barcodes Subscriptions API](https://apis.io/collections/komoju/open-komoju-subscriptions-api/)
+- [KOMOJU Barcodes Tokens API](https://apis.io/collections/komoju/open-komoju-tokens-api/)
 
-Create, capture, refund, cancel, update, and list payments across cards, konbini, bank transfer, Pay-easy, and e-money wallets. Supports two-step capture (authorize then capture) and manual refund requests for non-refundable methods like konbini.
+#### Security (2)
 
-- **Human URL:** [https://doc.komoju.com/reference/payments](https://doc.komoju.com/reference/payments)
-- **Base URL:** `https://komoju.com/api/v1`
+Authentication, trust centre, and vulnerability disclosure.
 
-#### Tags
+- [Komoju Authentication](https://apis.io/security/komoju/komoju-authentication/)
+- [Komoju Domain Security](https://apis.io/security/komoju/komoju-domain-security/)
 
-- Payments
-- Refunds
-- Konbini
+#### Plans and pricing (1)
 
-#### Properties
+Published plans, tiers and prices.
 
-- [Documentation](https://doc.komoju.com/docs/creating-payments-directly)
-- [API Reference](https://doc.komoju.com/reference/payments)
-- [OpenAPI](openapi/komoju-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/komoju.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/komoju.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Komoju Plans Pricing](https://apis.io/plans/komoju/komoju-plans-pricing/)
 
-### KOMOJU Sessions API
+#### Rate limits (1)
 
-Hosted checkout sessions that collect payment or customer details on a KOMOJU-hosted page. Create, show, cancel, and pay for sessions in payment, customer, or customer_payment mode.
+Published request limits.
 
-- **Human URL:** [https://doc.komoju.com/reference/sessions](https://doc.komoju.com/reference/sessions)
-- **Base URL:** `https://komoju.com/api/v1`
+- [Komoju Rate Limits](https://apis.io/rate-limits/komoju/komoju-rate-limits/)
 
-#### Tags
+#### FinOps (1)
 
-- Checkout
-- Hosted Page
-- Sessions
+What the API costs to run, by operation.
 
-#### Properties
+- [Komoju Finops](https://apis.io/finops/komoju/komoju-finops/)
 
-- [Documentation](https://doc.komoju.com/docs/hosted-page-integration-guide)
-- [API Reference](https://doc.komoju.com/reference/sessions)
-- [OpenAPI](openapi/komoju-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
+## Where to find this API
 
-### KOMOJU Tokens API
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-Tokenize payment details so sensitive card data never touches your server. Create short-term tokens and 3D Secure secure tokens, and retrieve secure token status for later use as payment details.
-
-- **Human URL:** [https://doc.komoju.com/reference/tokens](https://doc.komoju.com/reference/tokens)
-- **Base URL:** `https://komoju.com/api/v1`
-
-#### Tags
-
-- Tokenization
-- 3D Secure
-- Cards
-
-#### Properties
-
-- [Documentation](https://doc.komoju.com/docs/tokenizing-payment-details)
-- [API Reference](https://doc.komoju.com/reference/tokens)
-- [OpenAPI](openapi/komoju-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-
-### KOMOJU Customers API
-
-Create, retrieve, update, list, and delete customers with securely stored payment details. A saved customer ID can be charged directly in place of raw payment details for delayed billing and repeat purchases.
-
-- **Human URL:** [https://doc.komoju.com/reference/createcustomer](https://doc.komoju.com/reference/createcustomer)
-- **Base URL:** `https://komoju.com/api/v1`
-
-#### Tags
-
-- Customers
-- Saved Cards
-- Recurring
-
-#### Properties
-
-- [Documentation](https://doc.komoju.com/docs/long-term-tokens)
-- [API Reference](https://doc.komoju.com/reference/createcustomer)
-- [OpenAPI](openapi/komoju-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-
-### KOMOJU Subscriptions API
-
-Recurring payments charged against a saved customer on a weekly, monthly, or yearly period. Create, show, list, and delete subscriptions; subscriptions are immutable once created.
-
-- **Human URL:** [https://doc.komoju.com/reference/subscriptions](https://doc.komoju.com/reference/subscriptions)
-- **Base URL:** `https://komoju.com/api/v1`
-
-#### Tags
-
-- Subscriptions
-- Recurring Payments
-- Billing
-
-#### Properties
-
-- [API Reference](https://doc.komoju.com/reference/subscriptions)
-- [OpenAPI](openapi/komoju-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-
-### KOMOJU Payment Methods API
-
-Lists the payment methods available to the authenticated merchant for a given amount and currency - credit_card, konbini, bank_transfer, pay_easy, paypay, merpay, au_pay, rakutenpay, linepay, alipay, wechatpay, and paidy - plus konbini barcode retrieval for compatible payments.
-
-- **Human URL:** [https://doc.komoju.com/reference/listpaymentmethods](https://doc.komoju.com/reference/listpaymentmethods)
-- **Base URL:** `https://komoju.com/api/v1`
-
-#### Tags
-
-- Payment Methods
-- Konbini
-- E-Money
-
-#### Properties
-
-- [Documentation](https://doc.komoju.com/supported-payment-methods)
-- [API Reference](https://doc.komoju.com/reference/listpaymentmethods)
-- [OpenAPI](openapi/komoju-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-
-### KOMOJU Events API
-
-Query the webhook events KOMOJU emits (payment.authorized, payment.captured, payment.refunded, payment.failed, payment.marked.as.fraud, and more). Webhooks are delivered as signed HTTP POSTs verified via an X-Komoju-Signature HMAC header.
-
-- **Human URL:** [https://doc.komoju.com/reference/listevents](https://doc.komoju.com/reference/listevents)
-- **Base URL:** `https://komoju.com/api/v1`
-
-#### Tags
-
-- Webhooks
-- Events
-- Notifications
-
-#### Properties
-
-- [Documentation](https://doc.komoju.com/docs/webhooks)
-- [API Reference](https://doc.komoju.com/reference/listevents)
-- [OpenAPI](openapi/komoju-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-
-## Common Properties
-
-- [Domain Security](security/komoju-domain-security.yml)
-- [Authentication](authentication/komoju-authentication.yml)
-- [GitHub Organization](https://github.com/komoju)
-- [LinkedIn](https://www.linkedin.com/company/komoju)
 - [Website](https://en.komoju.com)
 - [Documentation](https://doc.komoju.com)
-- [Plans](plans/komoju-plans-pricing.yml)
-- [Rate Limits](rate-limits/komoju-rate-limits.yml)
-- [Fin Ops](finops/komoju-finops.yml)
+- [Blog](https://en.komoju.com/blog/)
+- [GitHub](https://github.com/komoju)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 26.1** — emerging · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 52.2 |
+| Contract governance | 0.0 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 27.4 |
+| Access clarity | 7.9 |
+
+**Agent readiness 19.6** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | — |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 10.7** — Payments
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/komoju/](https://apis.io/providers/komoju/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for KOMOJU: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/komoju/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
